@@ -61,7 +61,7 @@ def find_xray_noise_root(module_name, thermal_cycle):
 def copy_txt_files_for_analysis(module_name, chip_type, output_dir):
     # Copy OUT.txt files to the current directory for analysis
     # Source directory with the OUT.txt files
-    source_dir = os.path.join(BASE_DIR, "xray_files/tuned_txt_files", module_name)
+    source_dir = os.path.join(BASE_DIR, "tuned_txt_files", module_name)
     
     if not os.path.exists(source_dir):
         print_colored(f"Source directory not found: {source_dir}", "red")

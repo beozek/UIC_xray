@@ -29,7 +29,7 @@ def copy_out_txt_files(module_name, chip_type):
         source_dir = DOWNLOADS_DIR
         
         # Target directory (create if it doesn't exist)
-        target_dir = os.path.join(BASE_DIR, "xray_files/tuned_txt_files", module_name)
+        target_dir = os.path.join(BASE_DIR, "tuned_txt_files", module_name)
         os.makedirs(target_dir, exist_ok=True)
         
         # Expected file pattern in Downloads
@@ -106,7 +106,7 @@ def main():
     if copy_out_txt_files(module_name, chip_type):
         print_colored("=" * 50, "blue")
         print_colored(f"All files copied for module {module_name}", "green")
-        print_colored(f"Files saved to: {os.path.join(BASE_DIR, 'xray_files/tuned_txt_files', module_name)}", "green")
+        print_colored(f"Files saved to: {os.path.join(BASE_DIR, 'tuned_txt_files', module_name)}", "green")
         print_colored("=" * 50, "blue")
 
 if __name__ == "__main__":
