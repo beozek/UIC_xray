@@ -49,6 +49,25 @@ if [[ -n "$CHIP_VERSION" ]]; then
 fi
 echo "Bias Voltage: $BIAS_VOLTAGE V"
 
+# Determine the chip Ids for this module type
+if [[ "$CHIP_TYPE" == "quad" ]]; then
+    CHIP_IDS=(12 13 14 15)
+else
+    CHIP_IDS=(12 13)
+fi
+
+# Prompt for the per-chip hardware values that differ from module to module.
+# (Lane and RxPolarity stay as set in the XML.)
+declare -A EFUSE_CODE IREF_CODE VTRIM_DIG VTRIM_ANA
+echo -e "${GREEN}Enter the per-chip values for this module (${CHIP_TYPE}: chips ${CHIP_IDS[*]}).${RESET}"
+for CHIP in "${CHIP_IDS[@]}"; do
+    echo -e "${GREEN}--- Chip ${CHIP} ---${RESET}"
+    read -p "  eFuseCode for chip ${CHIP}: " EFUSE_CODE[$CHIP]
+    read -p "  IrefCode for chip ${CHIP}: " IREF_CODE[$CHIP]
+    read -p "  VDDD (VOLTAGE_TRIM_DIG) for chip ${CHIP}: " VTRIM_DIG[$CHIP]
+    read -p "  VDDDA (VOLTAGE_TRIM_ANA) for chip ${CHIP}: " VTRIM_ANA[$CHIP]
+done
+
 # Step 1.5: Ask if the user wants to copy files from Downloads
 read -p "Do you want to copy calibration files from the Downloads folder? (y/n): " COPY_FROM_DOWNLOADS
 if [[ "$COPY_FROM_DOWNLOADS" =~ ^[Yy]$ ]]; then
@@ -127,6 +146,23 @@ echo "Copied tuned config files to: $XRAY_DIR"
 # (correct module name from the prompt, _OUT suffix). The chip number is preserved.
 echo -e "${GREEN}Setting tuned config files in $(basename "$XML_FILE")...${RESET}"
 sed -i -E "s|configFile=\"[^\"]*CMSIT_RD53_[A-Za-z0-9]+_0_([0-9]+)[^\"]*\.txt\"|configFile=\"${XRAY_DIR}/CMSIT_RD53_${MODULE_NAME}_0_\1_OUT.txt\"|g" "$XML_FILE"
+
+# Set the Hybrid Name to the module name from the prompt
+echo -e "${GREEN}Setting Hybrid Name to ${MODULE_NAME}...${RESET}"
+sed -i -E "s|(<Hybrid[^>]* Name=\")[^\"]*(\")|\1${MODULE_NAME}\2|" "$XML_FILE"
+
+# Set the per-chip hardware values from the prompt.
+# eFuseCode/IrefCode are on the <RD53Bv2 Id="N" ...> tag; VOLTAGE_TRIM_DIG/ANA are
+# in that chip's inline <Settings ...>. Each substitution is scoped to the chip block
+# (from the chip's opening tag to its </RD53Bv2>), so chips don't bleed into each other.
+echo -e "${GREEN}Setting per-chip eFuseCode/IrefCode/VDDD/VDDDA in $(basename "$XML_FILE")...${RESET}"
+for CHIP in "${CHIP_IDS[@]}"; do
+    sed -i -E "/<RD53Bv2 Id=\"${CHIP}\"/,/<\/RD53Bv2>/ s/eFuseCode=\"[^\"]*\"/eFuseCode=\"${EFUSE_CODE[$CHIP]}\"/" "$XML_FILE"
+    sed -i -E "/<RD53Bv2 Id=\"${CHIP}\"/,/<\/RD53Bv2>/ s/IrefCode=\"[^\"]*\"/IrefCode=\"${IREF_CODE[$CHIP]}\"/" "$XML_FILE"
+    sed -i -E "/<RD53Bv2 Id=\"${CHIP}\"/,/<\/RD53Bv2>/ s/VOLTAGE_TRIM_DIG=\"[^\"]*\"/VOLTAGE_TRIM_DIG=\"${VTRIM_DIG[$CHIP]}\"/" "$XML_FILE"
+    sed -i -E "/<RD53Bv2 Id=\"${CHIP}\"/,/<\/RD53Bv2>/ s/VOLTAGE_TRIM_ANA=\"[^\"]*\"/VOLTAGE_TRIM_ANA=\"${VTRIM_ANA[$CHIP]}\"/" "$XML_FILE"
+    echo "  Chip ${CHIP}: eFuse=${EFUSE_CODE[$CHIP]} Iref=${IREF_CODE[$CHIP]} VDDD=${VTRIM_DIG[$CHIP]} VDDDA=${VTRIM_ANA[$CHIP]}"
+done
 
 # Modify GTX RX polarity in XML file based on module name
 # if [[ "$CHIP_TYPE" == "quad" && "$CHIP_VERSION" == "v2" ]]; then
