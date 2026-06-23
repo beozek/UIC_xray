@@ -73,11 +73,10 @@ if [[ "$COPY_FROM_DOWNLOADS" =~ ^[Yy]$ ]]; then
     fi
 fi
 
-# Step 2: Run the Python script
-echo -e "${GREEN}=== Running the Python script ===${RESET}"
-echo "Please provide the answers to set up module files and folders..."
-python "$PYTHON_SCRIPT" || { echo "Error: Python script execution failed!"; exit 1; }
-echo -e "${GREEN}Python script executed successfully.${RESET}"
+# Step 2: (removed) The analysis script (xray_test.py) is NOT run here.
+# Running it with no arguments made it fall back to its default -sensor (SH0054)
+# and run before the noise scan even existed. The analysis is run later in
+# Step 5 via run_xray_analysis.py, which passes the correct module name.
 
 # Construct the thermal cycle directory path
 # THERMAL_CYCLE_DIR="${MODULE_TESTING_DIR}/${MODULE_NAME}/xray/ThermalCycle_${THERMAL_CYCLE}"

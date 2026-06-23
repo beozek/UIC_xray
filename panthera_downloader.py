@@ -8,7 +8,7 @@ import glob
 import argparse
 
 # Constants
-BASE_DIR = "/home/tfpxxray/Desktop/Ph2_ACF/Ph2_ACF/module_testing"
+BASE_DIR = "/home/tfpxxray/Ph2_ACF/Ph2_ACF/module_testing"
 DOWNLOADS_DIR = "/home/tfpxxray/Downloads"
 
 def print_colored(message, color="green"):
