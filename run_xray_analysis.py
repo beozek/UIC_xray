@@ -38,20 +38,15 @@ def find_scurve_file(module_name, downloads_dir=DOWNLOADS_DIR):
     print_colored(f"File modification time: {os.path.getmtime(latest_file)}", "blue")
     return latest_file
 
-def find_xray_noise_root(module_name, thermal_cycle):
-    # Find NoiseScan.root file in the thermal cycle Results directory
-    # results_dir = os.path.join(BASE_DIR, module_name, "xray", f"ThermalCycle_{thermal_cycle}", "Results")
-    results_dir = os.path.join(BASE_DIR, module_name, "xray", f"ThermalCycle_{thermal_cycle}", "fc7.board.2")
-
-    if not os.path.exists(results_dir):
-        print_colored(f"Results directory not found: {results_dir}", "red")
-        return None
-
-    # Find the latest *NoiseScan*.root file (the run number/name changes per module)
-    noise_files = glob.glob(os.path.join(results_dir, "*NoiseScan*.root"))
+def find_xray_noise_root(module_name, downloads_dir=DOWNLOADS_DIR):
+    # Find the latest *NoiseScan*.root file in the Downloads directory.
+    # The fc7 board info was removed from the XML, so the noise scan output
+    # lands in Downloads (same as the SCurve file). The run number/name
+    # changes per module, so just take the most recently modified file.
+    noise_files = glob.glob(os.path.join(downloads_dir, "*NoiseScan*.root"))
 
     if not noise_files:
-        print_colored(f"No *NoiseScan*.root files found in {results_dir}", "yellow")
+        print_colored(f"No *NoiseScan*.root files found in {downloads_dir}", "yellow")
         return None
 
     latest_file = max(noise_files, key=os.path.getmtime)
@@ -221,7 +216,7 @@ def main():
             print_colored("No SCurve file found. X-ray analysis might not work correctly.", "yellow")
     
     # 3. Find the noise root file
-    noise_file = find_xray_noise_root(args.module, args.thermal_cycle)
+    noise_file = find_xray_noise_root(args.module)
     if not noise_file:
         print_colored("No NoiseScan.root file found. X-ray analysis might not work correctly.", "yellow")
     

@@ -78,16 +78,11 @@ fi
 # and run before the noise scan even existed. The analysis is run later in
 # Step 5 via run_xray_analysis.py, which passes the correct module name.
 
-# Construct the thermal cycle directory path
-# THERMAL_CYCLE_DIR="${MODULE_TESTING_DIR}/${MODULE_NAME}/xray/ThermalCycle_${THERMAL_CYCLE}"
-# echo "Constructed thermal cycle directory path: $THERMAL_CYCLE_DIR"
-
-# Verify if the thermal cycle directory exists
-# if [ ! -d "$THERMAL_CYCLE_DIR" ]; then
-#     echo -e "${RED}Error: Thermal cycle directory $THERMAL_CYCLE_DIR does not exist!${RESET}"
-#     exit 1
-# fi
-# echo "Thermal cycle directory exists. Proceeding..."
+# Construct and create the per-module xray directory (no thermal cycle info)
+XRAY_DIR="${MODULE_TESTING_DIR}/${MODULE_NAME}/xray"
+echo "Constructed xray directory path: $XRAY_DIR"
+mkdir -p "$XRAY_DIR" || { echo -e "${RED}Error: Failed to create $XRAY_DIR${RESET}"; exit 1; }
+echo "xray directory ready. Proceeding..."
 
 # Step 3: Source setup.sh
 echo -e "${GREEN}Sourcing setup.sh to configure the environment...${RESET}"
@@ -99,9 +94,9 @@ fi
 source setup.sh
 echo -e "${GREEN}Environment setup completed.${RESET}"
 
-# Navigate to the thermal cycle directory
-# echo "Navigating to the thermal cycle directory: $THERMAL_CYCLE_DIR"
-# cd "$THERMAL_CYCLE_DIR" || { echo "Error: Failed to navigate to $THERMAL_CYCLE_DIR"; exit 1; }
+# Navigate to the per-module xray directory
+echo "Navigating to the xray directory: $XRAY_DIR"
+cd "$XRAY_DIR" || { echo "Error: Failed to navigate to $XRAY_DIR"; exit 1; }
 
 # Select the XML file for the chosen chip type (from the script directory)
 echo -e "${GREEN}Looking for the ${CHIP_TYPE} XML file...${RESET}"
@@ -112,10 +107,11 @@ if [ ! -f "$XML_FILE" ]; then
 fi
 echo "XML file found: $XML_FILE"
 
-# Inject the module name (from the prompt) into the per-chip configFile references,
-# so the module name is never hard-coded in the XML.
-echo -e "${GREEN}Setting module name to ${MODULE_NAME} in $(basename "$XML_FILE")...${RESET}"
-sed -i -E "s/(configFile=\"CMSIT_RD53_)[A-Za-z0-9]+(_0_)/\1${MODULE_NAME}\2/g" "$XML_FILE"
+# Point each per-chip configFile at the tuned _OUT.txt file for this module
+# (full path, correct module name, _OUT suffix). The chip number is preserved.
+TUNED_DIR="${MODULE_TESTING_DIR}/tuned_txt_files/${MODULE_NAME}"
+echo -e "${GREEN}Setting tuned config files (${TUNED_DIR}) in $(basename "$XML_FILE")...${RESET}"
+sed -i -E "s|configFile=\"[^\"]*CMSIT_RD53_[A-Za-z0-9]+_0_([0-9]+)[^\"]*\.txt\"|configFile=\"${TUNED_DIR}/CMSIT_RD53_${MODULE_NAME}_0_\1_OUT.txt\"|g" "$XML_FILE"
 
 # Modify GTX RX polarity in XML file based on module name
 # if [[ "$CHIP_TYPE" == "quad" && "$CHIP_VERSION" == "v2" ]]; then

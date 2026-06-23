@@ -4,11 +4,11 @@
     <OpticalGroup Id="0" enable="1" FMCId="L12">
       <Hybrid Id="0" enable="1" Name="RH0268">
         <RD53_Files file="./"/>
-        <RD53Bv2 Id="12" enable="1" Lane="3" eFuseCode="513586" IrefCode="7" configFile="CMSIT_RD53_RH0268_0_12.txt" RxGroups="0001" RxPolarity="0" TxGroup="2" TxChannel="0" TxPolarity="0" Comment="RD53Bv2">
+        <RD53Bv2 Id="12" enable="1" Lane="3" eFuseCode="513586" IrefCode="7" configFile="CMSIT_RD53_RH0268_0_12_OUT.txt" RxGroups="0001" RxPolarity="0" TxGroup="2" TxChannel="0" TxPolarity="0" Comment="RD53Bv2">
           <LaneConfig isPrimary="1" masterLane="0" outputLanes="0001" singleChannelInputs="0000" dualChannelInput="0000"/>
           <Settings DAC_PREAMP_L_LIN="281" DAC_PREAMP_R_LIN="286" DAC_PREAMP_TL_LIN="287" DAC_PREAMP_TR_LIN="289" DAC_PREAMP_T_LIN="282" DAC_PREAMP_M_LIN="297" DAC_FC_LIN="20" DAC_KRUM_CURR_LIN="70" DAC_REF_KRUM_LIN="352" DAC_COMP_LIN="105" DAC_COMP_TA_LIN="100" DAC_GDAC_L_LIN="" DAC_GDAC_R_LIN="" DAC_GDAC_M_LIN="" DAC_LDAC_LIN="144" VCAL_HIGH="2000" VCAL_MED="100" GP_LVDS_ROUTE_0="1495" GP_LVDS_ROUTE_1="1495" TriggerConfig="136" CLK_DATA_DELAY="0" CAL_EDGE_FINE_DELAY="33" ANALOG_INJ_MODE="0" SEL_CAL_RANGE="0" SelfTriggerEn="0" SelfTriggerDelay="30" EnOutputDataChipId="1" VOLTAGE_TRIM_DIG="8" VOLTAGE_TRIM_ANA="9" CML_CONFIG_SER_EN_TAP="0b00" CML_CONFIG_SER_INV_TAP="0b00" DAC_CML_BIAS_0="500" DAC_CML_BIAS_1="0" DAC_CML_BIAS_2="0" MON_ADC_TRIM="5" ToT6to4Mapping="0" ToTDualEdgeCount="0" RESISTORI2V="5000" ADC_OFFSET_VOLT="150.75421629404886" ADC_MAXIMUM_VOLT="792.3773674887182" TEMPSENS_IDEAL_FACTOR="1225" SAMPLE_N_TIMES="10" VREF_ADC="831.57501" WAIT_MUX_CONFIG="100" NTCBETA="3500" RNTCAT25C="1500" EN_CORE_COL_0="" EN_CORE_COL_1="" EN_CORE_COL_2="" EN_CORE_COL_3="" INJ_CAP="83.0632"/>
         </RD53Bv2>
-        <RD53Bv2 Id="13" enable="1" Lane="1" eFuseCode="514242" IrefCode="10" configFile="CMSIT_RD53_RH0268_0_13.txt" RxGroups="0001" RxPolarity="0" TxGroup="2" TxChannel="0" TxPolarity="0" Comment="RD53Bv2">
+        <RD53Bv2 Id="13" enable="1" Lane="1" eFuseCode="514242" IrefCode="10" configFile="CMSIT_RD53_RH0268_0_13_OUT.txt" RxGroups="0001" RxPolarity="0" TxGroup="2" TxChannel="0" TxPolarity="0" Comment="RD53Bv2">
           <LaneConfig isPrimary="1" masterLane="0" outputLanes="0001" singleChannelInputs="0000" dualChannelInput="0000"/>
           <Settings DAC_PREAMP_L_LIN="286" DAC_PREAMP_R_LIN="273" DAC_PREAMP_TL_LIN="284" DAC_PREAMP_TR_LIN="279" DAC_PREAMP_T_LIN="274" DAC_PREAMP_M_LIN="276" DAC_FC_LIN="20" DAC_KRUM_CURR_LIN="70" DAC_REF_KRUM_LIN="348" DAC_COMP_LIN="101" DAC_COMP_TA_LIN="97" DAC_GDAC_L_LIN="" DAC_GDAC_R_LIN="" DAC_GDAC_M_LIN="" DAC_LDAC_LIN="137" VCAL_HIGH="2000" VCAL_MED="100" GP_LVDS_ROUTE_0="1495" GP_LVDS_ROUTE_1="1495" TriggerConfig="136" CLK_DATA_DELAY="0" CAL_EDGE_FINE_DELAY="32" ANALOG_INJ_MODE="0" SEL_CAL_RANGE="0" SelfTriggerEn="0" SelfTriggerDelay="30" EnOutputDataChipId="1" VOLTAGE_TRIM_DIG="7" VOLTAGE_TRIM_ANA="9" CML_CONFIG_SER_EN_TAP="0b00" CML_CONFIG_SER_INV_TAP="0b00" DAC_CML_BIAS_0="500" DAC_CML_BIAS_1="0" DAC_CML_BIAS_2="0" MON_ADC_TRIM="5" ToT6to4Mapping="0" ToTDualEdgeCount="0" RESISTORI2V="5000" ADC_OFFSET_VOLT="217.2902135585242" ADC_MAXIMUM_VOLT="792.3937908773911" TEMPSENS_IDEAL_FACTOR="1225" SAMPLE_N_TIMES="10" VREF_ADC="834.2444699999999" WAIT_MUX_CONFIG="100" NTCBETA="3500" RNTCAT25C="1500" EN_CORE_COL_0="" EN_CORE_COL_1="" EN_CORE_COL_2="" EN_CORE_COL_3="" INJ_CAP="82.033"/>
         </RD53Bv2>
@@ -207,7 +207,7 @@
     <Setting name="MaxMaskedPixels">1</Setting>
     <Setting name="DoOnlyNGroups">0</Setting>
     <Setting name="DisableChannelsAtExit">1</Setting>
-    <Setting name="DataOutputDir">fc7.board.1</Setting>
+    <Setting name="DataOutputDir"/>
     <Setting name="DoDataIntegrity">0</Setting>
   </Settings>
   <MonitoringSettings>
