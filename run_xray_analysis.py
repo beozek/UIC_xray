@@ -6,10 +6,10 @@ import shutil
 import sys
 
 # Constants
-BASE_DIR = "/home/tfpxxray/Desktop/Ph2_ACF/Ph2_ACF/module_testing"
+BASE_DIR = "/home/tfpxxray/Ph2_ACF/Ph2_ACF/module_testing"
 DOWNLOADS_DIR = "/home/tfpxxray/Downloads"
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-XRAY_ANALYSIS_SCRIPT = os.path.join(SCRIPT_DIR, "xray_analysis.py")
+XRAY_ANALYSIS_SCRIPT = os.path.join(SCRIPT_DIR, "xray_test.py")
 
 def print_colored(message, color="green"):
     # Print colored messages to terminal
@@ -129,7 +129,7 @@ def copy_scurve_root_for_analysis(scurve_file, output_dir):
         return False
 
 def run_xray_analysis(module_name, scurve_file, noise_file, bias, output_dir, chip_type, chip_ids=None):
-    # Run the xray_analysis.py script with appropriate parameters"""
+    # Run the xray_test.py script with appropriate parameters"""
     if not os.path.exists(XRAY_ANALYSIS_SCRIPT):
         print_colored(f"X-ray analysis script not found: {XRAY_ANALYSIS_SCRIPT}", "red")
         return False
@@ -172,8 +172,7 @@ def run_xray_analysis(module_name, scurve_file, noise_file, bias, output_dir, ch
         sys.executable,  # Use the current Python interpreter
         XRAY_ANALYSIS_SCRIPT,
         "-scurve", scurve_base,
-        # "-noise", noise_base,
-        "-noise", "/home/tfpxxray/Desktop/Ph2_ACF/Ph2_ACF/module_testing/RH0307/xray/ThermalCycle_0/fc7.board.2/Run000000_NoiseScan",
+        "-noise", noise_base,
         "-outpath", "analysis_results",
         "-sensor", module_name,
         "-bias", str(bias),
@@ -219,7 +218,7 @@ def main():
     # Set up argument parsing
     parser = argparse.ArgumentParser(description='Run X-ray analysis on test results')
     parser.add_argument('--module', '-m', help='Module name (e.g., SH0058)', required=True)
-    parser.add_argument('--thermal-cycle', '-t', help='Thermal cycle number', required=True)
+    parser.add_argument('--thermal-cycle', '-t', help='Thermal cycle number', default='0')
     parser.add_argument('--chip-type', '-c', choices=['dual', 'quad'], help='Chip type (dual or quad)', required=True)
     parser.add_argument('--bias', '-b', help='Bias voltage (V)', type=float, default=80.0)
     parser.add_argument('--scurve-file', '-s', help='SCurve root file (optional, will search Downloads if not provided)')

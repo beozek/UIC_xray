@@ -104,14 +104,19 @@ echo -e "${GREEN}Environment setup completed.${RESET}"
 # echo "Navigating to the thermal cycle directory: $THERMAL_CYCLE_DIR"
 # cd "$THERMAL_CYCLE_DIR" || { echo "Error: Failed to navigate to $THERMAL_CYCLE_DIR"; exit 1; }
 
-# Verify XML file existence
-echo -e "${GREEN}Looking for the XML file in the thermal cycle directory...${RESET}"
-XML_FILE=$(ls CMSIT_xray_noise_CROC*.xml | head -n 1)
-# if [ -z "$XML_FILE" ]; then
-#     echo "Error: No XML file found in $THERMAL_CYCLE_DIR!"
-#     exit 1
-# fi
+# Select the XML file for the chosen chip type (from the script directory)
+echo -e "${GREEN}Looking for the ${CHIP_TYPE} XML file...${RESET}"
+XML_FILE="${SCRIPT_DIR}/CMSIT_xray_noise_CROC${CHIP_VERSION}_${CHIP_TYPE}.xml"
+if [ ! -f "$XML_FILE" ]; then
+    echo -e "${RED}Error: XML file $XML_FILE not found!${RESET}"
+    exit 1
+fi
 echo "XML file found: $XML_FILE"
+
+# Inject the module name (from the prompt) into the per-chip configFile references,
+# so the module name is never hard-coded in the XML.
+echo -e "${GREEN}Setting module name to ${MODULE_NAME} in $(basename "$XML_FILE")...${RESET}"
+sed -i -E "s/(configFile=\"CMSIT_RD53_)[A-Za-z0-9]+(_0_)/\1${MODULE_NAME}\2/g" "$XML_FILE"
 
 # Modify GTX RX polarity in XML file based on module name
 # if [[ "$CHIP_TYPE" == "quad" && "$CHIP_VERSION" == "v2" ]]; then

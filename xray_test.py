@@ -27,6 +27,12 @@ except ImportError:
 import argparse
 import matplotlib.patches as patches
 
+
+# How to run manually:
+# python xray_analysis.py -scurve Run0000041_SCurve -noise Run000000_NoiseScan -sensor SH0055
+
+
+
 # Arguments --------------------
 parser = argparse.ArgumentParser(description='Do the XRay analysis')
 
@@ -35,7 +41,7 @@ parser = argparse.ArgumentParser(description='Do the XRay analysis')
 
 parser.add_argument('-scurve','--scurve', help = 'The name of the SCurve.root (and txt) file', default = 'Run000021', type = str)
 parser.add_argument('-noise','--noise', help = 'The name of the Noise.root file', default = 'Run000088', type = str)
-parser.add_argument('-outpath','--outpath', help = 'The name of the folder to be created in results', default = 'a_v2', type = str)
+parser.add_argument('-outpath','--outpath', help = 'The name of the folder to be created in results', default = 'results_xray_ToT', type = str)
 
 # Removed the -chips argument as chips are now defined within the script
 # parser.add_argument('-chips', '--chips', nargs='+', help='List of chip IDs to process', required=True) 
@@ -46,21 +52,25 @@ parser.add_argument('-bias','--bias', help = 'The bias of the sensor [V]', defau
 parser.add_argument('-vref','--vref', help = 'The VRef_ADC [mV]', default = 800, type = int)
 parser.add_argument('-ntrg','--ntrg', help = 'The total # of triggers in the xml', default = 1e7, type = int)
 parser.add_argument('-nbx','--nbx', help = 'The total # of bunch crossing for each trigger in the xml', default = 10, type = int)
+parser.add_argument('-chiptype','--chiptype', help = 'Type of module (dual or quad)', default = 'quad', type = str)
 args = parser.parse_args()
 
 debug = False
 
-# Define the list of chips directly in the script
-chips = [12, 13, 14, 15]
+# Set chip list based on module type
+if args.chiptype.lower() == 'dual':
+    chips = [12, 13]
+else:  # Default to quad
+    chips = [12, 13, 14, 15]
 
 # Path to the SCurve root file (contains threshold data)
-thr_data_file='Run000411_SCurve.root'
+thr_data_file = f"{args.scurve}.root"
 
 # X-ray output: NoiseScan root file
-analyzed_data_file='Run000000_NoiseScan-28.root'
+analyzed_data_file = f"{args.noise}.root"
 
 # Path where the results will be stored
-Path='results_xray_ToT/'
+Path = args.outpath
 
 # Thresholds and other parameters
 Thr = args.thr_missing
