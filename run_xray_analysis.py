@@ -23,34 +23,17 @@ def print_colored(message, color="green"):
     print(f"{colors.get(color, colors['green'])}{message}{colors['reset']}")
 
 def find_scurve_file(module_name, downloads_dir=DOWNLOADS_DIR):
-    # Find latest SCurve.root file in Downloads directory
-    
-    # First try to find any SCurve files with the module name pattern
-    module_patterns = [
-        f"*{module_name}*SCurve*.root",
-        f"*SCurve*{module_name}*.root",
-        f"*{module_name.replace('SH', '')}*SCurve*.root"
-    ]
-    
-    for pattern in module_patterns:
-        full_pattern = os.path.join(downloads_dir, pattern)
-        files = glob.glob(full_pattern)
-        if files:
-            # Sort by modification time to get the latest file
-            latest_file = max(files, key=os.path.getmtime)
-            print_colored(f"Found SCurve file with module name: {latest_file}", "green")
-            return latest_file
-    
-    # If no module-specific files found, look for the latest Run*_SCurve.root file
-    run_pattern = os.path.join(downloads_dir, "Run*_SCurve.root")
-    run_files = glob.glob(run_pattern)
-    
-    if not run_files:
-        print_colored("No Run*_SCurve.root files found in downloads directory", "yellow")
+    # Find the latest *SCurve*.root file in the Downloads directory.
+    # The run number/name changes from module to module, so just take the
+    # most recently modified SCurve file rather than matching on the name.
+    scurve_files = glob.glob(os.path.join(downloads_dir, "*SCurve*.root"))
+
+    if not scurve_files:
+        print_colored("No *SCurve*.root files found in downloads directory", "yellow")
         return None
-    
+
     # Sort by modification time to get the latest file
-    latest_file = max(run_files, key=os.path.getmtime)
+    latest_file = max(scurve_files, key=os.path.getmtime)
     print_colored(f"Found latest SCurve file: {latest_file}", "green")
     print_colored(f"File modification time: {os.path.getmtime(latest_file)}", "blue")
     return latest_file
@@ -63,21 +46,17 @@ def find_xray_noise_root(module_name, thermal_cycle):
     if not os.path.exists(results_dir):
         print_colored(f"Results directory not found: {results_dir}", "red")
         return None
-    
-    # Try finding the NoiseScan.root file
-    patterns = [
-        "Run*_NoiseScan*.root",
-        "Run*NoiseScan*.root"
-    ]
-    
-    for pattern in patterns:
-        full_pattern = os.path.join(results_dir, pattern)
-        files = glob.glob(full_pattern)
-        if files:
-            print_colored(f"Found NoiseScan file: {files[0]}", "green")
-            return files[0]
-    
-    return None
+
+    # Find the latest *NoiseScan*.root file (the run number/name changes per module)
+    noise_files = glob.glob(os.path.join(results_dir, "*NoiseScan*.root"))
+
+    if not noise_files:
+        print_colored(f"No *NoiseScan*.root files found in {results_dir}", "yellow")
+        return None
+
+    latest_file = max(noise_files, key=os.path.getmtime)
+    print_colored(f"Found latest NoiseScan file: {latest_file}", "green")
+    return latest_file
 
 def copy_txt_files_for_analysis(module_name, chip_type, output_dir):
     # Copy OUT.txt files to the current directory for analysis
