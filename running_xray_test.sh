@@ -98,20 +98,35 @@ echo -e "${GREEN}Environment setup completed.${RESET}"
 echo "Navigating to the xray directory: $XRAY_DIR"
 cd "$XRAY_DIR" || { echo "Error: Failed to navigate to $XRAY_DIR"; exit 1; }
 
-# Select the XML file for the chosen chip type (from the script directory)
+# Select the source XML for the chosen chip type (from the script/xray_area directory)
 echo -e "${GREEN}Looking for the ${CHIP_TYPE} XML file...${RESET}"
-XML_FILE="${SCRIPT_DIR}/CMSIT_xray_noise_CROC${CHIP_VERSION}_${CHIP_TYPE}.xml"
-if [ ! -f "$XML_FILE" ]; then
-    echo -e "${RED}Error: XML file $XML_FILE not found!${RESET}"
+SRC_XML="${SCRIPT_DIR}/CMSIT_xray_noise_CROC${CHIP_VERSION}_${CHIP_TYPE}.xml"
+if [ ! -f "$SRC_XML" ]; then
+    echo -e "${RED}Error: XML file $SRC_XML not found!${RESET}"
     exit 1
 fi
-echo "XML file found: $XML_FILE"
+echo "XML file found: $SRC_XML"
 
-# Point each per-chip configFile at the tuned _OUT.txt file for this module
-# (full path, correct module name, _OUT suffix). The chip number is preserved.
+# Copy the XML into the per-module xray directory and work on that copy
+# (keeps the source XML in xray_area unchanged)
+XML_FILE="${XRAY_DIR}/$(basename "$SRC_XML")"
+cp "$SRC_XML" "$XML_FILE" || { echo -e "${RED}Error: Failed to copy XML to $XRAY_DIR${RESET}"; exit 1; }
+echo "Copied XML to: $XML_FILE"
+
+# Copy the tuned _OUT.txt config files for this module into the xray directory
 TUNED_DIR="${MODULE_TESTING_DIR}/tuned_txt_files/${MODULE_NAME}"
-echo -e "${GREEN}Setting tuned config files (${TUNED_DIR}) in $(basename "$XML_FILE")...${RESET}"
-sed -i -E "s|configFile=\"[^\"]*CMSIT_RD53_[A-Za-z0-9]+_0_([0-9]+)[^\"]*\.txt\"|configFile=\"${TUNED_DIR}/CMSIT_RD53_${MODULE_NAME}_0_\1_OUT.txt\"|g" "$XML_FILE"
+echo -e "${GREEN}Copying tuned config files from ${TUNED_DIR}...${RESET}"
+if [ ! -d "$TUNED_DIR" ]; then
+    echo -e "${RED}Error: Tuned config directory $TUNED_DIR not found!${RESET}"
+    exit 1
+fi
+cp "${TUNED_DIR}/CMSIT_RD53_${MODULE_NAME}_0_"*_OUT.txt "$XRAY_DIR"/ || { echo -e "${RED}Error: Failed to copy tuned txt files${RESET}"; exit 1; }
+echo "Copied tuned config files to: $XRAY_DIR"
+
+# Point each per-chip configFile at the copied tuned _OUT.txt file in the xray directory
+# (correct module name from the prompt, _OUT suffix). The chip number is preserved.
+echo -e "${GREEN}Setting tuned config files in $(basename "$XML_FILE")...${RESET}"
+sed -i -E "s|configFile=\"[^\"]*CMSIT_RD53_[A-Za-z0-9]+_0_([0-9]+)[^\"]*\.txt\"|configFile=\"${XRAY_DIR}/CMSIT_RD53_${MODULE_NAME}_0_\1_OUT.txt\"|g" "$XML_FILE"
 
 # Modify GTX RX polarity in XML file based on module name
 # if [[ "$CHIP_TYPE" == "quad" && "$CHIP_VERSION" == "v2" ]]; then
