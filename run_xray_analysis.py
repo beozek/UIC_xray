@@ -206,7 +206,7 @@ def main():
     args = parser.parse_args()
     
     # Create output directory for analysis
-    output_dir = os.path.join(BASE_DIR, args.module, "xray", f"ThermalCycle_{args.thermal_cycle}", "Analysis")
+    output_dir = os.path.join(BASE_DIR, args.module, "xray", "Analysis")
     os.makedirs(output_dir, exist_ok=True)
     print_colored(f"Analysis results will be saved to: {output_dir}", "blue")
     

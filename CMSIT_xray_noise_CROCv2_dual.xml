@@ -2,7 +2,7 @@
   <BeBoard Id="0" boardType="RD53" eventType="VR" configure="1">
     <connection id="cmsinnertracker.crate0.slot0" uri="chtcp-2.0://localhost:10203?target=192.168.1.80:50001" address_table="file://${PH2ACF_BASE_DIR}/settings/address_tables/CMSIT_address_table.xml"/>
     <OpticalGroup Id="0" enable="1" FMCId="L12">
-      <Hybrid Id="0" enable="1" Name="RH0268">
+      <Hybrid Id="1" enable="1" Name="RH0268">
         <RD53_Files file="./"/>
         <RD53Bv2 Id="12" enable="1" Lane="3" eFuseCode="513586" IrefCode="7" configFile="CMSIT_RD53_RH0268_0_12_OUT.txt" RxGroups="0001" RxPolarity="0" TxGroup="2" TxChannel="0" TxPolarity="0" Comment="RD53Bv2">
           <LaneConfig isPrimary="1" masterLane="0" outputLanes="0001" singleChannelInputs="0000" dualChannelInput="0000"/>
